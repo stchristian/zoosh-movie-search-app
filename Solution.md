@@ -1,51 +1,47 @@
 # Movie Search Application - Solution
 
-## Overview
+## Implementation Approach
 
-A React TypeScript application for searching movies via TMDB GraphQL API with Wikipedia integration. Features include search with pagination, similar/recommended movies, and comprehensive E2E testing.
+This solution was built following specific technical requirements and clean code principles:
 
-## Tech Stack
+- React (no Next.js) with Material-UI, Axios, and graphql-request (latest versions)
+- Clean code principles: DRY, YAGNI, KISS
+- Clean architecture with separation of concerns (components, services, hooks, types)
+- All core + bonus requirements implemented
+- Playwright testing verified with MCP integration
+- Vercel-ready deployment with `vercel.json`
+- Pagination implemented for search queries
 
-- **React 18** + **TypeScript** + **Vite** - Modern React setup
-- **Material-UI 6** - Component library for UI consistency
-- **graphql-request** - Lightweight GraphQL client
-- **Axios** - REST API client for Wikipedia
-- **Playwright** - E2E testing framework
+## Technical Highlights
 
-## Architecture
+**Architecture Decisions:**
 
-```
-src/
-├── components/      # UI components (SearchBar, MovieList, MovieDetail, Pagination)
-├── services/        # API integrations (GraphQL + Wikipedia REST)
-├── hooks/           # Custom hooks (useMovies for state management)
-├── types/           # TypeScript interfaces
-└── App.tsx          # Main component
-```
+- Custom `useMovies` hook encapsulates all movie state and side effects
+- Service layer abstracts GraphQL and REST API integrations
+- Full TypeScript type safety with dedicated interfaces
 
-## Features Implemented ✅
+**State Management:**
 
-**Core:**
+- Local state via custom hook (sufficient for current complexity)
+- Manages three view modes: search, similar, recommended
+- Preserves search query and pagination state for back navigation
 
-- Movie search with pagination
-- Display movie data (name, genres, rating, votes, poster thumbnail)
-- Wikipedia summary integration with external link
-- Loading spinners for async operations
+**API Integration:**
 
-**Bonus:**
+- TMDB GraphQL: `searchMovies`, `getSimilarMovies`, `getRecommendedMovies`
+- Wikipedia REST API for movie summaries with error handling
+- Loading states for all async operations
 
-- Similar/recommended movies via icon buttons
-- Material-UI design system
-- 7 E2E Playwright tests
-- Dual-state navigation (search ↔ similar ↔ recommended)
+**Testing:**
+
+- 7 E2E tests covering complete user flows
 
 ## Areas for Improvement
 
 **Architecture & State:**
 
-- Introduce centralized state management (Zustand/Redux) for complex state sharing
-- Add React Router for proper URL-based navigation and deep linking
-- Implement React Query/TanStack Query for API caching and data synchronization
-- Add error boundaries for graceful error handling at component level
-- Configure ESLint + Prettier with pre-commit hooks (Husky)
-- Generate TypeScript types from GraphQL schema (GraphQL Code Generator)
+- Introduce centralized state management (Zustand/Redux) for complex cross-component state
+- Add React Router for URL-based navigation and shareable movie links
+- Implement React Query/TanStack Query for automatic caching and background sync
+- Add error boundaries at route/section level for isolated error handling
+- GraphQL Code Generator for auto-generated TypeScript types from schema
