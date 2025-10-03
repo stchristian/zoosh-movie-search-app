@@ -1,0 +1,740 @@
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+) on FIELD_DEFINITION | OBJECT | INTERFACE
+directive @formatNumber(defaultFormat: String = "0,0.0000") on FIELD_DEFINITION
+directive @formatDate(
+  defaultFormat: String = "mmmm d, yyyy"
+) on FIELD_DEFINITION
+directive @camelCase on FIELD_DEFINITION
+directive @capitalize on FIELD_DEFINITION
+directive @deburr on FIELD_DEFINITION
+directive @kebabCase on FIELD_DEFINITION
+directive @lowerCase on FIELD_DEFINITION
+directive @lowerFirst on FIELD_DEFINITION
+directive @snakeCase on FIELD_DEFINITION
+directive @toLower on FIELD_DEFINITION
+directive @toUpper on FIELD_DEFINITION
+directive @trim on FIELD_DEFINITION
+directive @upperCase on FIELD_DEFINITION
+directive @upperFirst on FIELD_DEFINITION
+directive @specifiedBy(url: String!) on SCALAR
+type Backdrop implements Image {
+  file: String
+  custom(size: String, svg: Boolean, color: Palette, base64: Boolean): URL
+  original(svg: Boolean, color: Palette, base64: Boolean): URL
+  svg(size: String, color: Palette, base64: Boolean): URL
+  colors: ExtractedColors
+  small: URL
+  medium: URL
+  large: URL
+}
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+type Cast {
+  credit: Credit!
+  character: String!
+}
+
+type Collection {
+  id: ID!
+  name: String!
+  overview: String!
+  parts(language: Translations): [Movie!]!
+  poster: Poster
+  backdrop: Backdrop
+  images: [MediaImage!]!
+}
+
+type Company {
+  id: ID!
+  name: String!
+  description: String!
+  country: Country!
+  headquarters: String!
+  parentCompany: Company
+  homepage: URL!
+  logo: Logo!
+  images: [Logo!]!
+}
+
+type Country {
+  code: String!
+  name: String!
+}
+
+type Credit {
+  id: ID!
+  person: Person
+  media: Media!
+  role: CreditType!
+}
+
+union CreditType = Cast | Crew
+type Crew {
+  credit: Credit!
+  job: String!
+  department: String!
+}
+
+input DateRangeInput {
+  from: ISODate
+  to: ISODate
+}
+
+scalar DateTime
+
+enum Direction {
+  ASC
+  DESC
+}
+
+input DiscoverMoviesFilter {
+  language: Translations
+  region: RegionCode
+  includeAdult: Boolean
+  includeVideo: Boolean
+  primaryReleaseYear: Int
+  primaryReleaseDate: DateRangeInput
+  releaseDate: DateRangeInput
+  withReleaseType: ReleaseTypeInput
+  year: Int
+  voteCount: NumberRangeInput
+  voteAverage: VoteAverageInput
+  withCast: IDListInput
+  withCrew: IDListInput
+  withPeople: IDListInput
+  withCompanies: IDListInput
+  withGenres: IDListInput
+  withKeywords: KeywordInput
+  withRuntime: NumberRangeInput
+  withOriginalLanguage: Translations
+}
+
+enum DiscoverMoviesSortBy {
+  Popularity
+  ReleaseDate
+  Revenue
+  PrimaryReleaseDate
+  OriginalTitle
+  VoteAverage
+  VoteCount
+}
+
+input DiscoverMoviesSortInput {
+  by: DiscoverMoviesSortBy = Popularity
+  direction: Direction = DESC
+}
+
+input DiscoverTVFilter {
+  language: Translations
+  airDate: DateRangeInput
+  firstAired: DateRangeInput
+  firstAiredYear: Int
+  includeUnaired: Boolean = false
+  screenedTheatrically: Boolean
+  timeZone: String
+  voteAverage: VoteAverageInput
+  voteCount: NumberRangeInput
+  withCompanies: IDListInput
+  withGenres: IDListInput
+  withNetworks: IDListInput
+  withRuntime: NumberRangeInput
+  withOriginalLanguage: Translations
+  withKeywords: KeywordInput
+}
+
+enum DiscoverTVSortBy {
+  Popularity
+  FirstAirDate
+  VoteAverage
+}
+
+input DiscoverTVSortInput {
+  by: DiscoverTVSortBy = Popularity
+  direction: Direction = DESC
+}
+
+scalar EmailAddress
+
+type Episode {
+  id: ID!
+  series: TV!
+  season: Season!
+  number: Int!
+  name: String!
+  overview: String!
+  aired: DateTime!
+  cast(limit: Int): [Credit!]!
+  crew(limit: Int): [Credit!]!
+  guests(limit: Int): [Credit!]!
+  score: Float!
+  votes: Int!
+  still: Still
+  images: [Still!]!
+  videos(language: Translations, filter: VideoFilter, first: Int): [Video!]!
+}
+
+enum EpisodeVideoType {
+  Trailer
+  Teaser
+  Clip
+  Featurette
+  OpeningCredits
+  BehindtheScenes
+  Bloopers
+  Recap
+}
+
+type ExtractedColors {
+  vibrant: [Int]
+  lightVibrant: [Int]
+  darkVibrant: [Int]
+  muted: [Int]
+  lightMuted: [Int]
+  darkMuted: [Int]
+}
+
+enum Gender {
+  Unknown
+  Female
+  Male
+}
+
+type Genre {
+  id: ID!
+  name: String!
+}
+
+input IDListInput {
+  include: [ID!]
+  exclude: [ID!]
+}
+
+interface Image {
+  file: String
+  custom(size: String, svg: Boolean, color: Palette, base64: Boolean): URL
+  original(svg: Boolean, color: Palette, base64: Boolean): URL
+  svg(size: String, color: Palette, base64: Boolean): URL
+  colors: ExtractedColors
+}
+
+scalar ISODate
+
+type Job {
+  department: String!
+  name: String!
+}
+
+type Keyword {
+  id: ID!
+  name: String!
+}
+
+input KeywordInput {
+  include: [ID!]
+  includeLogic: Logic = AND
+  exclude: [ID!]
+  excludeLogic: Logic = AND
+}
+
+type Language {
+  code: String!
+  name: String!
+}
+
+scalar LanguageCode
+
+enum Logic {
+  AND
+  OR
+}
+
+type Logo implements Image {
+  file: String
+  custom(size: String, svg: Boolean, color: Palette, base64: Boolean): URL
+  original(svg: Boolean, color: Palette, base64: Boolean): URL
+  svg(size: String, color: Palette, base64: Boolean): URL
+  colors: ExtractedColors
+  icon: URL
+  tiny: URL
+  small: URL
+  medium: URL
+  large: URL
+  huge: URL
+}
+
+union Media = Movie | TV
+union MediaImage = Poster | Backdrop
+enum MediaType {
+  Movie
+  TV
+}
+
+type Movie {
+  id: ID!
+  name: String!
+  tagline: String
+  overview: String!
+  country: [Country!]!
+  languages: [Language!]!
+  status: ReleaseStatus!
+  genres: [Genre!]!
+  keywords: [Keyword!]!
+  releaseDate: DateTime
+  runtime: Int
+  budget: Int!
+  revenue: String!
+  adult: Boolean!
+  cast(limit: Int): [Credit!]!
+  crew(limit: Int): [Credit!]!
+  productionCompanies: [Company!]!
+  homepage: URL
+  socialMedia: SocialMedia
+  poster: Poster
+  backdrop: Backdrop
+  images: [MediaImage!]!
+  videos(language: Translations, filter: VideoFilter, first: Int): [Video!]!
+  popularity: Float!
+  score: Float!
+  votes: Int!
+  reviews(
+    language: Translations
+    limit: Int
+    page: PageRange = false
+  ): [Review!]!
+  collection(language: Translations): Collection
+  recommended(
+    language: Translations
+    page: PageRange = false
+    limit: Int
+  ): [Movie!]!
+  similar(
+    language: Translations
+    page: PageRange = false
+    limit: Int
+  ): [Movie!]!
+}
+
+enum MovieVideoType {
+  Trailer
+  Teaser
+  Clip
+  Featurette
+  BehindtheScenes
+  Bloopers
+}
+
+type Network {
+  id: ID!
+  name: String!
+  country: String!
+  headquarters: String!
+  homepage: URL!
+  images: [Logo!]!
+}
+
+input NumberRangeInput {
+  min: Int = 0
+  max: Int
+}
+
+scalar PageRange
+
+enum Palette {
+  vibrant
+  lightVibrant
+  darkVibrant
+  muted
+  lightMuted
+  darkMuted
+}
+
+type Person {
+  id: ID!
+  name: String!
+  aliases: [String!]!
+  knownFor: String!
+  biography: String!
+  gender: Gender!
+  birthday: DateTime
+  birthplace: String
+  diedOn: DateTime
+  adult: Boolean!
+  homepage: URL
+  socialMedia: SocialMedia
+  credits(limit: Int, type: [MediaType!]!): [Credit!]!
+  workedOn(limit: Int): [Media!]!
+  appearsIn(limit: Int): [Media!]!
+  photo: Photo!
+  images: [Photo!]!
+  taggedImages: [MediaImage!]!
+}
+
+type Photo implements Image {
+  file: String
+  custom(size: String, svg: Boolean, color: Palette, base64: Boolean): URL
+  original(svg: Boolean, color: Palette, base64: Boolean): URL
+  svg(size: String, color: Palette, base64: Boolean): URL
+  colors: ExtractedColors
+  small: URL
+  medium: URL
+  large: URL
+}
+
+type Poster implements Image {
+  file: String
+  custom(size: String, svg: Boolean, color: Palette, base64: Boolean): URL
+  original(svg: Boolean, color: Palette, base64: Boolean): URL
+  svg(size: String, color: Palette, base64: Boolean): URL
+  colors: ExtractedColors
+  thumbnail: URL
+  tiny: URL
+  small: URL
+  medium: URL
+  large: URL
+  huge: URL
+}
+
+type Query {
+  countries: [Country!]!
+  jobs: [Job!]!
+  languages: [Language!]!
+  timezones: [Timezone!]!
+  collection(id: ID!, language: Translations = English): Collection!
+  movieGenres(language: Translations = English): [Genre!]!
+  tvGenres(language: Translations = English): [Genre!]!
+  movie(id: ID!, language: Translations = English): Movie!
+  person(id: ID!, language: Translations = English): Person!
+  tv(id: ID!, language: Translations = English): TV!
+  review(id: ID!): Review!
+  movies(ids: [ID!], language: Translations = English): [Movie!]!
+  people(ids: [ID!], language: Translations = English): [Person!]!
+  shows(ids: [ID!], language: Translations = English): [TV!]!
+  reviews(ids: [ID!]): [Review!]!
+  latestMovie(language: Translations = English): Movie!
+  latestPerson(language: Translations = English): Person!
+  latestTV(language: Translations = English): TV!
+  popularMovies(
+    page: PageRange = false
+    language: Translations = English
+  ): [Movie!]!
+  popularPeople(
+    page: PageRange = false
+    language: Translations = English
+  ): [Person!]!
+  popularTV(page: PageRange = false, language: Translations = English): [TV!]!
+  search(
+    query: String!
+    page: PageRange = false
+    language: Translations = English
+  ): [SearchResult!]!
+  searchMovies(
+    query: String!
+    page: PageRange = false
+    language: Translations = English
+  ): [Movie!]!
+  searchPeople(
+    query: String!
+    page: PageRange = false
+    language: Translations = English
+  ): [Person!]!
+  searchTV(
+    query: String!
+    page: PageRange = false
+    language: Translations = English
+  ): [TV!]!
+  discoverMovies(
+    filter: DiscoverMoviesFilter
+    sortBy: DiscoverMoviesSortInput
+    page: PageRange = false
+    language: Translations = English
+  ): [Movie!]!
+  discoverTV(
+    filter: DiscoverTVFilter
+    sortBy: DiscoverTVSortInput
+    page: PageRange = false
+    language: Translations = English
+  ): [TV!]!
+  nowPlaying(
+    page: PageRange = false
+    language: Translations = English
+  ): [Movie!]!
+  topRatedMovies(
+    page: PageRange = false
+    language: Translations = English
+  ): [Movie!]!
+  upcomingMovies(
+    page: PageRange = false
+    language: Translations = English
+  ): [Movie!]!
+  airingThisWeek(
+    page: PageRange = false
+    language: Translations = English
+  ): [TV!]!
+  airingToday(page: PageRange = false, language: Translations = English): [TV!]!
+  topRatedTV(page: PageRange = false, language: Translations = English): [TV!]!
+  trending(
+    timeframe: TrendingTimeframe = Day
+    page: PageRange = false
+  ): [SearchResult!]!
+  trendingMovies(
+    timeframe: TrendingTimeframe = Day
+    page: PageRange = false
+  ): [Movie!]!
+  trendingPeople(
+    timeframe: TrendingTimeframe = Day
+    page: PageRange = false
+  ): [Person!]!
+  trendingTV(
+    timeframe: TrendingTimeframe = Day
+    page: PageRange = false
+  ): [TV!]!
+}
+
+scalar RegionCode
+
+enum ReleaseStatus {
+  Rumored
+  Planned
+  InProduction
+  PostProduction
+  Released
+  Canceled
+}
+
+input ReleaseTypeInput {
+  types: [ReleaseStatus!]
+  logic: Logic = OR
+}
+
+type Review {
+  id: ID!
+  author: String!
+  content: String!
+  language: Language
+  media: Media!
+  url: URL!
+}
+
+scalar ScoreMaximumRange
+
+scalar ScoreMinimumRange
+
+union SearchResult = Movie | Person | TV
+type Season {
+  id: ID!
+  series: TV!
+  number: Int!
+  name: String!
+  overview: String!
+  aired: DateTime!
+  cast(limit: Int): [Credit!]!
+  crew(limit: Int): [Credit!]!
+  episodeCount: Int!
+  episodes: [Episode!]!
+  poster: Poster
+  images: [Poster!]!
+  videos(language: Translations, filter: VideoFilter, first: Int): [Video!]!
+}
+
+enum SeasonVideoType {
+  Trailer
+  Teaser
+  Clip
+  Featurette
+  OpeningCredits
+  BehindtheScenes
+  Bloopers
+  Recap
+}
+
+type SocialMedia {
+  id: ID!
+  imdb: URL
+  facebook: URL
+  instagram: URL
+  twitter: URL
+}
+
+type Still implements Image {
+  file: String
+  custom(size: String, svg: Boolean, color: Palette, base64: Boolean): URL
+  original(svg: Boolean, color: Palette, base64: Boolean): URL
+  svg(size: String, color: Palette, base64: Boolean): URL
+  colors: ExtractedColors
+  small: URL
+  medium: URL
+  large: URL
+}
+
+type Timezone {
+  code: String!
+  zone: String!
+}
+
+enum Translations {
+  UAEArabic
+  SaudiArabianArabic
+  Bulgarian
+  Bangla
+  Catalan
+  Chamorro
+  Czech
+  Danish
+  German
+  Greek
+  English
+  Esperanto
+  Spanish
+  MexicanSpanish
+  Basque
+  Farsi
+  Finnish
+  CanadianFrench
+  French
+  Hebrew
+  Hindi
+  Hungarian
+  Indonesian
+  Italian
+  Japanese
+  Georgian
+  Kannada
+  Korean
+  Lithuanian
+  Malayalam
+  BokmalNorwegian
+  Dutch
+  Norwegian
+  Polish
+  BrazilianPortuguese
+  Portuguese
+  Romanian
+  Russian
+  Slovak
+  Slovenian
+  Serbian
+  Swedish
+  Tamil
+  Telugu
+  Thai
+  Turkish
+  Ukrainian
+  Vietnamese
+  ChineseSimplified
+  ChineseTraditional
+}
+
+enum TrendingTimeframe {
+  Day
+  Week
+}
+
+type TV {
+  id: ID!
+  name: String!
+  originalName: String!
+  overview: String!
+  country: [Country!]!
+  language: Language!
+  languages: [Language!]!
+  type: TVType!
+  status: TVStatus!
+  genres: [Genre!]!
+  inProduction: Boolean!
+  firstAired: DateTime!
+  lastAired: DateTime!
+  runtime: [Int!]!
+  createdBy: [Person!]!
+  cast(limit: Int): [Credit!]!
+  crew(limit: Int): [Credit!]!
+  networks: [Network!]!
+  productionCompanies: [Company!]!
+  homepage: URL
+  socialMedia: SocialMedia
+  seasonCount: Int!
+  seasons: [Season!]!
+  episodeCount: Int!
+  episodes: [Episode!]!
+  poster: Poster
+  backdrop: Backdrop
+  images: [MediaImage!]!
+  videos(language: Translations, filter: VideoFilter, first: Int): [Video!]!
+  popularity: Float!
+  score: Float!
+  votes: Int!
+  reviews(limit: Int, page: PageRange = false): [Review!]!
+  recommended(
+    language: Translations
+    page: PageRange = false
+    limit: Int
+  ): [TV!]!
+  similar(language: Translations, page: PageRange = false, limit: Int): [TV!]!
+}
+
+enum TVStatus {
+  ReturningSeries
+  Planned
+  InProduction
+  Ended
+  Canceled
+  Pilot
+}
+
+enum TVType {
+  Scripted
+  Reality
+  Documentary
+  News
+  TalkShow
+  Miniseries
+}
+
+enum TVVideoType {
+  Trailer
+  Teaser
+  Clip
+  Featurette
+  OpeningCredits
+  BehindtheScenes
+  Bloopers
+}
+
+scalar URL
+
+type Video {
+  id: ID!
+  name: String!
+  key: String!
+  site: String!
+  language: Language!
+  country: Country!
+  size: Int!
+  type: VideoType!
+}
+
+input VideoFilter {
+  site: [String!]
+  type: [VideoType!]
+}
+
+enum VideoType {
+  Trailer
+  Teaser
+  Clip
+  Featurette
+  OpeningCredits
+  BehindtheScenes
+  Bloopers
+  Recap
+}
+
+input VoteAverageInput {
+  min: ScoreMinimumRange = false
+  max: ScoreMaximumRange = false
+}
