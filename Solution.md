@@ -8,7 +8,6 @@ This solution was built following specific technical requirements and clean code
 - Clean code principles: DRY, YAGNI, KISS
 - Clean architecture with separation of concerns (components, services, hooks, types)
 - All core + bonus requirements implemented
-- Playwright testing verified with MCP integration
 - Vercel-ready deployment with `vercel.json`
 - Pagination implemented for search queries
 
